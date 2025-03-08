@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@vue/shared": "^3.5.13",
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "element-plus": "^2.6.3",
+    "html2canvas": "^1.4.1",
     "pinia": "^2.1.7",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5"
