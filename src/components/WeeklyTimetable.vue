@@ -173,6 +173,17 @@ export default {
         start.add(i, 'day').format('YYYY-MM-DD')
       )
     }
+  },
+  props: ['data'],
+  watch: {
+    data(newVal) {
+      if (newVal && newVal.length > 0) {
+        // 等待DOM渲染完成
+        this.$nextTick(() => {
+          this.$emit('timetable-loaded');
+        });
+      }
+    }
   }
 }
 </script>

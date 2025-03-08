@@ -1,16 +1,24 @@
 <template>
-  <div class="timetable-image-wrapper">
-    <!-- 如果课表数据还未加载，则显示加载中 -->
-    <div v-if="!timetableReady" class="loading">
-      正在加载课表，请稍候...
+  <div>
+    <!-- WeeklyTimetable组件 -->
+    <WeeklyTimetable
+      v-if="timetableData.length"
+      :data="timetableData"
+      :selectedDate="selectedDate"
+      @timetable-loaded="onTimetableLoaded"
+    />
+
+    <!-- 生成图片区域，带背景 -->
+    <div v-if="timetableLoaded" class="timetable-image-wrapper">
+      <div ref="timetableContainer" class="timetable-image" :style="backgroundStyle">
+        <WeeklyTimetable :data="timetableData" :selectedDate="selectedDate" />
+        <div class="last-updated">
+          Last Updated: {{ lastUpdated }}
+        </div>
+      </div>
+      <button @click="generateImage">生成周课表图片</button>
+      <img v-if="timetableImage" :src="timetableImage" alt="课表图片预览">
     </div>
-    <!-- 当课表数据加载完成后，再显示整个图片区域 -->
-    <div v-else ref="timetableContainer" class="timetable-image" :style="{ backgroundImage: 'url(' + backgroundUrl + ')' }">
-      <WeeklyTimetable :data="data" :selectedDate="selectedDate" />
-      <div class="last-updated">Last Updated: {{ lastUpdated }}</div>
-    </div>
-    <!-- 只有在课表加载完成后才显示生成按钮 -->
-    <button v-if="timetableReady" class="generate-btn" @click="generateImage">生成周课表图片</button>
   </div>
 </template>
 
@@ -19,43 +27,40 @@ import WeeklyTimetable from './WeeklyTimetable.vue'
 import html2canvas from 'html2canvas'
 
 export default {
-  name: 'TimetableImage',
   components: { WeeklyTimetable },
-  props: {
-    data: {
-      type: Array,
-      default: () => []
-    },
-    selectedDate: {
-      type: String,
-      required: true
-    },
-    // 背景图片 URL，由你提供
-    backgroundUrl: {
-      type: String,
-      default: ''
-    }
-  },
   data() {
     return {
-      lastUpdated: new Date().toLocaleString()
+      timetableData: [],           // 从API加载的数据
+      selectedDate: '2025-03-02',  // 当前选中的日期
+      timetableLoaded: false,
+      timetableImage: null,
+      backgroundUrl: 'https://s2.loli.net/2025/03/08/VlesoEwDrIfJdYX.jpg' // 由你提供的背景图片URL
     }
   },
   computed: {
-    // 当 data 数组不为空时，认为课表已加载完成
-    timetableReady() {
-      return this.data && this.data.length > 0
+    backgroundStyle() {
+      return {
+        backgroundImage: `url(${this.backgroundUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: '20px'
+      }
     }
   },
   methods: {
-    generateImage() {
-      html2canvas(this.$refs.timetableContainer).then(canvas => {
-        const dataUrl = canvas.toDataURL('image/png')
+    onTimetableLoaded() {
+      this.timetableLoaded = true
+    },
+    generateTimetableImage() {
+      const element = this.$refs.timetableContainer;
+      html2canvas(element, { useCORS: true }).then(canvas => {
+        this.timetableImage = canvas.toDataURL('image/png')
+        // 自动下载图片
         const link = document.createElement('a')
-        link.href = dataUrl
+        link.href = this.timetableImage
         link.download = 'weekly_timetable.png'
         link.click()
-      })
+      });
     }
   }
 }
@@ -63,46 +68,44 @@ export default {
 
 <style scoped>
 .timetable-image-wrapper {
+  margin-top: 20px;
+  position: relative;
   width: 100%;
-  padding: 20px;
+  overflow-x: auto;
 }
 
 .timetable-image {
   position: relative;
-  width: 100%;
   min-width: 800px;
-  background-size: cover;
-  background-position: center;
-  padding: 20px;
 }
 
 .last-updated {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  font-size: 14px;
-  color: #333;
-  background-color: rgba(255, 255, 255, 0.7);
   padding: 5px 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.timetable-image-wrapper img {
+  max-width: 100%;
+  margin-top: 10px;
+  border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.generate-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
+button {
+  padding: 6px 12px;
   background-color: #409eff;
-  color: #fff;
-  border: none;
+  color: white;
   border-radius: 4px;
+  border: none;
   cursor: pointer;
 }
-.generate-btn:hover {
-  background-color: #66b1ff;
-}
 
-.loading {
-  font-size: 16px;
-  text-align: center;
-  padding: 40px;
+button:hover {
+  background-color: #66b1ff;
 }
 </style>
