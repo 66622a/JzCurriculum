@@ -60,6 +60,40 @@ td {
     @apply px-2 py-1 text-sm;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .main-container {
+    background-color: #1a202c;
+  }
+  .content-box {
+    background: #2d3748;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  }
+  .footer-info {
+    color: #a0aec0;
+  }
+  .section-comment {
+    color: #cbd5e0;
+  }
+  /* 针对 Element Plus 组件的暗黑模式调整 */
+  .el-select .el-input,
+  .el-cascader .el-input,
+  .el-date-picker .el-input__inner,
+  .el-input__inner {
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #4a5568 !important;
+  }
+  .el-select-dropdown,
+  .el-cascader-panel,
+  .el-picker-panel {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+  }
+}
+
+
 </style>
 
 <script>
