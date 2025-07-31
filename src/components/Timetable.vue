@@ -204,7 +204,7 @@ export default {
       }
     },
     async fetchTerms() {
-      const { data } = await axios.get('https://jzkq.runling.fun/api/Attendance/GetTerms');
+      const { data } = await axios.get('https://jz-api.qrfly.top/api/Attendance/GetTerms');
       this.terms = data.Data.sort((a, b) => b.TermId - a.TermId);
       this.selectedTerm = this.terms[0]?.TermId;
       await this.fetchClasses();
